@@ -17,7 +17,7 @@ func SetupRouter(port int, route string) {
 
 	// Calls whtestServerConnection which attempts to connect to the online hosted
 	// server through websockets through which data is transferred between servers
-	go whtestServerConnection("ws://whtest.pc-1827.online", port, route)
+	go whtestServerConnection("ws://whtest.pc-1827.online/whtest", port, route)
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
 
@@ -36,7 +36,8 @@ func SubdomainHandler(conn *websocket.Conn, port int, route string) {
 	} else {
 		conn.Close()
 		subdomainReceived = true
-		go whtestServerConnection(string(subdomain), port, route)
+		subdomainURL := "ws://" + string(subdomain) + route
+		go whtestServerConnection(string(subdomainURL), port, route)
 		// go whtestServerConnection("ws://localhost:2001/subdomain", port, route)
 
 		localServerURL := "http://localhost:" + strconv.Itoa(port) + route

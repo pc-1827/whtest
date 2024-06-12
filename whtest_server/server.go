@@ -44,7 +44,7 @@ func MessageAccepterHandler(conn *websocket.Conn) {
 var subdomainTimers = make(map[string]*time.Timer)
 
 func SubdomainAvailabilityChecker() string {
-	subdomains := []string{"subdomain1.whtest.com", "subdomain2.whtest.com", "subdomain3.whtest.com"}
+	subdomains := []string{"subdomain1.whtest.pc-1827.online", "subdomain2.whtest.pc-1827.online", "subdomain3.whtest.pc-1827.online"}
 
 	for _, subdomain := range subdomains {
 		timer, exists := subdomainTimers[subdomain]
