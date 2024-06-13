@@ -11,11 +11,13 @@ import (
 )
 
 func SetupRouter() {
+	fmt.Println("Setting up router for subdomains...")
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			http.Error(w, "Method not allowed for now", http.StatusMethodNotAllowed)
+			return
 		}
-		if dataForwading {
+		if dataForwarding {
 			ForwardDataHandler(w, r)
 		}
 	})
@@ -31,9 +33,8 @@ func SetupRouter() {
 	})
 }
 
-var dataForwading = false
+var dataForwarding = false
 
-// Handles receiving the webhook from the CLI
 func MessageAccepterHandler(conn *websocket.Conn) {
 	var timer *time.Timer
 
@@ -49,14 +50,12 @@ func MessageAccepterHandler(conn *websocket.Conn) {
 			fmt.Print("Received the encoded message.\n")
 
 			if message == "afjhfa793n&%$$kjhfah8H&h88h78uHY&99yhyfauhh8YUIH98Hh9``hhhre9rfhh93%4&" {
-				dataForwading = true
+				dataForwarding = true
 
-				// If a timer already exists, stop it
 				if timer != nil {
 					timer.Stop()
 				}
 
-				// Set a new timer to disconnect after one hour
 				timer = time.AfterFunc(1*time.Hour, func() {
 					log.Println("Timer expired, disconnecting...")
 					conn.Close()
@@ -80,10 +79,10 @@ func ForwardDataHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if err := conn.WriteMessage(websocket.TextMessage, []byte(body)); err != nil {
+		if err := conn.WriteMessage(websocket.TextMessage, body); err != nil {
 			log.Println("Error sending webhook to whtest server", err)
 			return
 		}
-		fmt.Print("Message received and forwaded to CLI.\n")
+		fmt.Print("Message received and forwarded to CLI.\n")
 	}()
 }

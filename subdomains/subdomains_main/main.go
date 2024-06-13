@@ -9,6 +9,6 @@ import (
 func main() {
 	subdomains.SetupRouter()
 
-	fmt.Println("Server listening on :2001")
-	http.ListenAndServe(":2001", nil)
+	fmt.Println("Server listening on :80")
+	http.ListenAndServe(":80", nil)
 }

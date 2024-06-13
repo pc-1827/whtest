@@ -1,13 +1,13 @@
 package subdomains
 
 import (
+	"net/http"
 	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
 )
 
-// Websocket connection logic
 var (
 	wsConn *websocket.Conn
 	connMu sync.Mutex
@@ -16,6 +16,7 @@ var (
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
 func waitForConnection() (*websocket.Conn, error) {
