@@ -11,6 +11,16 @@ import (
 
 func SetupRouter() {
 	http.HandleFunc("/whtest", func(w http.ResponseWriter, r *http.Request) {
+		// Add CORS headers
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		// Handle preflight requests
+		if r.Method == http.MethodOptions {
+			return
+		}
+
 		websocket, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
 			log.Println(err)
@@ -44,7 +54,7 @@ func MessageAccepterHandler(conn *websocket.Conn) {
 var subdomainTimers = make(map[string]*time.Timer)
 
 func SubdomainAvailabilityChecker() string {
-	subdomains := []string{"subdomain1.whtest.pc-1827.online", "subdomain2.whtest.pc-1827.online", "subdomain3.whtest.pc-1827.online"}
+	subdomains := []string{"subdomain1.onrender.com", "subdomain2.onrender.com", "subdomain3.onrender.com"}
 
 	for _, subdomain := range subdomains {
 		timer, exists := subdomainTimers[subdomain]

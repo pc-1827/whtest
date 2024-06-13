@@ -9,6 +9,6 @@ import (
 func main() {
 	whtest.SetupRouter()
 
-	fmt.Println("Server listening on :2000")
-	http.ListenAndServe(":2000", nil)
+	fmt.Println("Server listening on :80")
+	http.ListenAndServe(":80", nil)
 }

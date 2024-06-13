@@ -1,12 +1,13 @@
 package whtest
 
 import (
+	"net/http"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
 
-// Websocket connection logic
 var (
 	wsConn *websocket.Conn
 	connMu sync.Mutex
@@ -15,20 +16,21 @@ var (
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
-// func waitForConnection() (*websocket.Conn, error) {
-// 	for {
-// 		conn, err := getWebSocketConnection()
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		if conn != nil {
-// 			return conn, nil
-// 		}
-// 		time.Sleep(time.Millisecond * 100)
-// 	}
-// }
+func waitForConnection() (*websocket.Conn, error) {
+	for {
+		conn, err := getWebSocketConnection()
+		if err != nil {
+			return nil, err
+		}
+		if conn != nil {
+			return conn, nil
+		}
+		time.Sleep(time.Millisecond * 100)
+	}
+}
 
 func setWebSocketConnection(conn *websocket.Conn) {
 	connMu.Lock()
@@ -36,8 +38,8 @@ func setWebSocketConnection(conn *websocket.Conn) {
 	wsConn = conn
 }
 
-// func getWebSocketConnection() (*websocket.Conn, error) {
-// 	connMu.Lock()
-// 	defer connMu.Unlock()
-// 	return wsConn, nil
-// }
+func getWebSocketConnection() (*websocket.Conn, error) {
+	connMu.Lock()
+	defer connMu.Unlock()
+	return wsConn, nil
+}
