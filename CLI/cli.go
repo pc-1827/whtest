@@ -11,7 +11,6 @@ import (
 )
 
 func DataTransferHandler(conn *websocket.Conn, port int, route string) {
-	//fmt.Print("Port:", port, " Route:", route, "\n")
 	go func() {
 		for {
 			_, body, err := conn.ReadMessage()
@@ -29,10 +28,10 @@ func DataTransferHandler(conn *websocket.Conn, port int, route string) {
 
 			num = num + 1
 
-			fmt.Printf("%d. Data received and forwarded to your local app\n", num)
+			fmt.Printf("%d. Data received and forwarded to the local app\n", num)
 
 			defer resp.Body.Close()
-			//fmt.Println("Message received from websocket forwarding to /cli.")
+			fmt.Println("Message received from websocket forwarding to /cli.")
 		}
 	}()
 }
