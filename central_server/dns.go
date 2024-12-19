@@ -21,8 +21,8 @@ func CreateDNSRecord(subdomain, ipAddress string) error {
 		return fmt.Errorf("failed to create DNS client: %v", err)
 	}
 
-	resourceGroupName := "<your-resource-group>"
-	zoneName := "<your-domain>"
+	resourceGroupName := "MyAppResourceGroup"
+	zoneName := "pc-1827.online"
 	recordSetName := subdomain
 	ttl := int64(300)
 
@@ -66,8 +66,8 @@ func DeleteDNSRecord(subdomain string) error {
 		return fmt.Errorf("failed to create DNS client: %v", err)
 	}
 
-	resourceGroupName := "<your-resource-group>"
-	zoneName := "<your-domain>"
+	resourceGroupName := "MyAppResourceGroup"
+	zoneName := "pc-1827.online"
 	recordSetName := subdomain
 
 	_, err = dnsClient.Delete(

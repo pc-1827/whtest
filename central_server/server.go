@@ -81,7 +81,7 @@ func SubdomainTransfer(conn *websocket.Conn) {
 		return
 	}
 
-	hostName := subdomain + ".<your-domain>"
+	hostName := subdomain + ".pc-1827.online"
 
 	if err := conn.WriteMessage(websocket.TextMessage, []byte(hostName)); err != nil {
 		log.Println("Error sending subdomain to the CLI:", err)
@@ -116,7 +116,7 @@ func DeployPeripheralServer(subdomain string) error {
 			Containers: []corev1.Container{
 				{
 					Name:  "peripheral-server",
-					Image: "<your-acr-name>.azurecr.io/peripheral-server:latest",
+					Image: "pc1827.azurecr.io/peripheral-server:latest",
 					Ports: []corev1.ContainerPort{
 						{
 							ContainerPort: 2001,
@@ -177,7 +177,7 @@ func CreateIngress(subdomain, serviceName string, labels map[string]string) erro
 
 	namespace := "default"
 	ingressName := "peripheral-server-ingress-" + subdomain
-	host := subdomain + ".<your-domain>"
+	host := subdomain + ".pc-1827.online"
 
 	pathType := networkingv1.PathTypePrefix
 
