@@ -1,8 +1,5 @@
 package main
 
-// Main application user interface takes local server port and route as an input.
-// *Note: Need to develop a UI similar to ngrok in future.
-
 import (
 	"CLI"
 	"bufio"

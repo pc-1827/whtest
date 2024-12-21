@@ -55,7 +55,7 @@ func GetIngressControllerIP() (string, error) {
 	}
 
 	// Adjust the namespace and service name according to your deployment
-	svc, err := clientset.CoreV1().Services("ingress-nginx").Get(context.TODO(), "ingress-nginx-controller", metav1.GetOptions{})
+	svc, err := clientset.CoreV1().Services("ingress-nginx").Get(context.TODO(), "nginx-ingress-ingress-nginx-controller", metav1.GetOptions{})
 	if err != nil {
 		return "", fmt.Errorf("failed to get Ingress controller service: %v", err)
 	}

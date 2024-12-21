@@ -13,6 +13,7 @@ import (
 	networkingv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/client-go/kubernetes"
 )
 
 func SetupRouter() {
@@ -91,6 +92,36 @@ func SubdomainTransfer(conn *websocket.Conn) {
 	go StartCleanupTimer(subdomain)
 }
 
+// isPodReady checks if the pod has all containers in the Ready state.
+func isPodReady(pod *corev1.Pod) bool {
+	if len(pod.Status.ContainerStatuses) == 0 {
+		return false
+	}
+	for _, cs := range pod.Status.ContainerStatuses {
+		if !cs.Ready {
+			return false
+		}
+	}
+	return true
+}
+
+// waitForPodReady periodically checks if the newly created pod is in Ready state.
+func waitForPodReady(clientset *kubernetes.Clientset, namespace, podName string) error {
+	var maxAttempts = 30
+	for i := 0; i < maxAttempts; i++ {
+		time.Sleep(2 * time.Second) // Wait a bit between checks
+
+		pod, err := clientset.CoreV1().Pods(namespace).Get(context.TODO(), podName, metav1.GetOptions{})
+		if err != nil {
+			return fmt.Errorf("failed to get pod status: %v", err)
+		}
+		if isPodReady(pod) {
+			return nil
+		}
+	}
+	return fmt.Errorf("pod '%s' never became ready within the expected timeframe", podName)
+}
+
 func DeployPeripheralServer(subdomain string) error {
 	clientset, err := getKubernetesClient()
 	if err != nil {
@@ -134,7 +165,12 @@ func DeployPeripheralServer(subdomain string) error {
 		return fmt.Errorf("failed to create pod: %v", err)
 	}
 
-	// Define the Service
+	// Wait for the pod to become ready
+	if err := waitForPodReady(clientset, namespace, podName); err != nil {
+		return err
+	}
+
+	// Define and create the Service
 	service := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:   serviceName,
@@ -227,7 +263,7 @@ func CreateIngress(subdomain, serviceName string, labels map[string]string) erro
 
 func StartCleanupTimer(subdomain string) {
 	// Wait for 1 hour
-	time.Sleep(1 * time.Hour)
+	time.Sleep(5 * time.Minute)
 	// Clean up resources
 	ingressIP, err := GetIngressControllerIP()
 	if err != nil {

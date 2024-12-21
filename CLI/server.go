@@ -16,9 +16,8 @@ func SetupRouter(port int, route string, number string) {
 	fmt.Println("CLI has successfully connected with your local app")
 	fmt.Println("Webhook tester is hosted at port :8000")
 
-	// Calls whtestServerConnection which attempts to connect to the online hosted
-	// server through websockets through which data is transferred between servers
-	go whtestServerConnection("ws://localhost:2000/whtest", port, route, number)
+	centralServerURL := "ws://4.213.117.50:2000/whtest"
+	go whtestServerConnection(centralServerURL, port, route, number)
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
 
@@ -52,20 +51,15 @@ func SubdomainHandler(conn *websocket.Conn, port int, route string, number strin
 // identifying if the message is received by the CLI or not.
 func MessageTransfer(conn *websocket.Conn, number string) {
 	fmt.Println("Inside MessageTransfer function")
-	// Log the current connection state
 	if conn == nil {
 		log.Println("WebSocket connection is nil")
 		return
 	}
 
 	encodedMessage := "EncodedMessage"
-
-	// Create the message by combining encodedMessage and number
 	message := encodedMessage + ":" + number
 
 	fmt.Print("Encoded message is being transferred.\n")
-
-	// Log before sending the message
 	log.Println("Attempting to send message:", message)
 
 	if err := conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
@@ -73,14 +67,12 @@ func MessageTransfer(conn *websocket.Conn, number string) {
 		return
 	}
 
-	// Log after successful send
 	log.Println("Message sent successfully")
 }
 
 func whtestServerConnection(URL string, port int, route string, number string) {
 	fmt.Print("Hello, trying to connect to whtest_server.\n")
 
-	// Ensure the URL has the correct scheme
 	if !strings.HasPrefix(URL, "ws://") && !strings.HasPrefix(URL, "wss://") {
 		URL = "ws://" + URL
 	}
@@ -92,21 +84,16 @@ func whtestServerConnection(URL string, port int, route string, number string) {
 	}
 
 	fmt.Println("Successfully connected with whtest server")
-
-	// Call MessageTransfer function
 	fmt.Println("Calling MessageTransfer function")
 	MessageTransfer(conn, number)
 
 	if number == "1" {
-		// For webhook testing
 		if !subdomainReceived {
 			SubdomainHandler(conn, port, route, number)
 		} else {
 			DataTransferHandler(conn, port, route)
 		}
 	} else if number == "2" {
-		// For website demo
-		// For webhook testing
 		if !subdomainReceived {
 			SubdomainHandler(conn, port, route, number)
 		}

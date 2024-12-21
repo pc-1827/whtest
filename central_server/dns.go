@@ -16,7 +16,7 @@ func CreateDNSRecord(subdomain, ipAddress string) error {
 		return fmt.Errorf("failed to obtain a credential: %v", err)
 	}
 
-	dnsClient, err := armdns.NewRecordSetsClient("<subscription-id>", cred, nil)
+	dnsClient, err := armdns.NewRecordSetsClient("12804cf9-207b-4ddb-992b-8bbd11488d89", cred, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create DNS client: %v", err)
 	}
@@ -61,7 +61,7 @@ func DeleteDNSRecord(subdomain string) error {
 		return fmt.Errorf("failed to obtain a credential: %v", err)
 	}
 
-	dnsClient, err := armdns.NewRecordSetsClient("<subscription-id>", cred, nil)
+	dnsClient, err := armdns.NewRecordSetsClient("12804cf9-207b-4ddb-992b-8bbd11488d89", cred, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create DNS client: %v", err)
 	}
